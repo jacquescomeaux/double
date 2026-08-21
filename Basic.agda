@@ -13,7 +13,12 @@ record Category (o ℓ : Level) : Set (suc (o ⊔ ℓ)) where
     _⇒_ : Obj → Obj → Set ℓ
     id  : {A : Obj} → A ⇒ A
     _∘_ : {A B C : Obj} → B ⇒ C → A ⇒ B → A ⇒ C
-    assoc : {A B C D : Obj} {f : A ⇒ B} {g : B ⇒ C} {h : C ⇒ D} → (h ∘ g) ∘ f ≡ h ∘ (g ∘ f)
+    assoc
+        : {A B C D : Obj}
+          {f : A ⇒ B}
+          {g : B ⇒ C}
+          {h : C ⇒ D}
+        → (h ∘ g) ∘ f ≡ h ∘ (g ∘ f)
     identityˡ : {A B : Obj} {f : A ⇒ B} → id ∘ f ≡ f
     identityʳ : {A B : Obj} {f : A ⇒ B} → f ∘ id ≡ f
 
@@ -28,7 +33,11 @@ record Category (o ℓ : Level) : Set (suc (o ⊔ ℓ)) where
       to : B ⇒ A
       iso : Iso from to
 
-record Functor {o₁ o₂ ℓ₁ ℓ₂ : Level} (C : Category o₁ ℓ₁) (D : Category o₂ ℓ₂) : Set (o₁ ⊔ o₂ ⊔ ℓ₁ ⊔ ℓ₂) where
+record Functor
+    {o₁ o₂ ℓ₁ ℓ₂ : Level}
+    (C : Category o₁ ℓ₁)
+    (D : Category o₂ ℓ₂)
+  : Set (o₁ ⊔ o₂ ⊔ ℓ₁ ⊔ ℓ₂) where
 
   private
     module C = Category C
@@ -38,7 +47,11 @@ record Functor {o₁ o₂ ℓ₁ ℓ₂ : Level} (C : Category o₁ ℓ₁) (D :
     F₀ : C.Obj → D.Obj
     F₁ : {X Y : C.Obj} → X C.⇒ Y → F₀ X D.⇒ F₀ Y
     identity : {X : C.Obj} → F₁ (C.id {X}) ≡ D.id {F₀ X}
-    homomorphism : {X Y Z : C.Obj} {f : X C.⇒ Y} {g : Y C.⇒ Z} → F₁ (g C.∘ f) ≡ F₁ g D.∘ F₁ f
+    homomorphism
+        : {X Y Z : C.Obj}
+          {f : X C.⇒ Y}
+          {g : Y C.⇒ Z}
+        → F₁ (g C.∘ f) ≡ F₁ g D.∘ F₁ f
 
   ₀ : C.Obj → D.Obj
   ₀ = F₀
