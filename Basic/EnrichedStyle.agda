@@ -124,7 +124,7 @@ module _ {o₁ o₂ ℓ₁ ℓ₂ : Level} {C : Category o₁ ℓ₁} {D : Categ
 module _ {o ℓ : Level} where
 
   -- The identity functor
-  Id : {o ℓ : Level} {A : Category o ℓ} → Functor A A
+  Id : {A : Category o ℓ} → Functor A A
   Id = record
       { F₀ = idf
       ; F₁ = idf
