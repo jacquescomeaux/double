@@ -1,8 +1,8 @@
 {-# OPTIONS --without-K --safe #-}
 
-module Basic.Instance.Nat where
+module Basic.EnrichedStyle.Instance.Nat where
 
-open import Basic using (Category)
+open import Basic.EnrichedStyle using (Category)
 open import Data.Fin using (Fin)
 open import Data.Nat using (ℕ)
 open import Data.Vec using (Vec; tabulate; lookup; map)

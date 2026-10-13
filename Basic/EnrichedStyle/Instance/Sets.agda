@@ -1,8 +1,8 @@
 {-# OPTIONS --without-K --safe #-}
 
-module Basic.Instance.Sets where
+module Basic.EnrichedStyle.Instance.Sets where
 
-open import Basic using (Category)
+open import Basic.EnrichedStyle using (Category)
 open import Function using (id; _∘_)
 open import Level using (Level; suc)
 open import Relation.Binary.PropositionalEquality using (refl)

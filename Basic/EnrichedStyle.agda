@@ -1,10 +1,11 @@
 {-# OPTIONS --without-K --safe #-}
 
-module Basic where
+module Basic.EnrichedStyle where
 
 open import Level using (Level; _⊔_; suc)
 open import Relation.Binary.PropositionalEquality using (_≡_)
 
+-- Enriched-style category
 record Category (o ℓ : Level) : Set (suc (o ⊔ ℓ)) where
   infix  4 _⇒_
   infixr 9 _∘_

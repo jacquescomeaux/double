@@ -3,11 +3,11 @@
 open import Axiom.Extensionality.Propositional using (Extensionality)
 open import Level using (0ℓ)
 
-module Basic.Functor.Instance.NatToSets (funext : Extensionality 0ℓ 0ℓ) where
+module Basic.EnrichedStyle.Functor.Instance.NatToSets (funext : Extensionality 0ℓ 0ℓ) where
 
-open import Basic using (Functor)
-open import Basic.Instance.Nat using (Nat)
-open import Basic.Instance.Sets using (Sets)
+open import Basic.EnrichedStyle using (Functor)
+open import Basic.EnrichedStyle.Instance.Nat using (Nat)
+open import Basic.EnrichedStyle.Instance.Sets using (Sets)
 open import Data.Fin using (Fin)
 open import Data.Vec using (lookup)
 open import Data.Vec.Properties using (lookup∘tabulate; lookup-map)
