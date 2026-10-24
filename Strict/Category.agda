@@ -62,6 +62,12 @@ record Category (o ≈o ℓ e : Level) : Set (suc (o ⊔ ≈o ⊔ ℓ ⊔ e)) wh
 
   module Equiv {A B} = IsEquivalence (equiv {A} {B})
 
+  cast-unique : {A A′ B B′ : Obj} (≈A ≈A′ : A ≈ₒ A′) (≈B ≈B′ : B ≈ₒ B′) (f : A ⇒ B) → cast ≈A ≈B f ≈ cast ≈A′ ≈B′ f
+  cast-unique ≈A ≈A′ ≈B ≈B′ f =
+      Equiv.trans
+        (Equiv.sym (cast-cast ≈A′ ObjEquiv.refl ≈A ≈B′ ObjEquiv.refl ≈B f))
+        (cast-is-id ObjEquiv.refl ObjEquiv.refl (cast ≈A′ ≈B′ f))
+
   op : Category o ≈o ℓ e
   op = record
       { Objₛ       = Objₛ
