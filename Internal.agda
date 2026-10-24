@@ -22,17 +22,17 @@ record InternalCategory : Set (o ⊔ ℓ ⊔ e) where
 
   -- Two compatible morphisms
   field
-    P₁ : Pullback dom cod
+    Cmp : Pullback dom cod
 
-  open module P₁ = Pullback P₁ using () renaming (P to Mor×ₒMor)
+  open module Cmp = Pullback Cmp using () renaming (P to Mor×ₒMor)
 
   -- Three compatible morphisms
   field
-    P₂ : Pullback (dom ∘ P₁.p₂) cod
-    P₃ : Pullback dom (cod ∘ P₁.p₁)
+    Assocˡ : Pullback (dom ∘ Cmp.p₂) cod
+    Assocʳ : Pullback dom (cod ∘ Cmp.p₁)
 
-  open module P₂ = Pullback P₂ using () renaming (P to [Mor×ₒMor]×ₒMor)
-  open module P₃ = Pullback P₃ using () renaming (P to Mor×ₒ[Mor×ₒMor])
+  open module Assocˡ = Pullback Assocˡ using () renaming (P to [Mor×ₒMor]×ₒMor)
+  open module Assocʳ = Pullback Assocʳ using () renaming (P to Mor×ₒ[Mor×ₒMor])
 
   -- To express associativity, we build this limit with pullbacks (arrows pointing down)
   --
@@ -51,35 +51,35 @@ record InternalCategory : Set (o ⊔ ℓ ⊔ e) where
     id-cod : cod ∘ id ≈ C.id
     -- Composition of two compatible morphisms
     -∘- : Mor×ₒMor ⇒ Mor
-    ∘-dom : dom ∘ -∘- ≈ dom ∘ P₁.p₂
-    ∘-cod : cod ∘ -∘- ≈ cod ∘ P₁.p₁
+    ∘-dom : dom ∘ -∘- ≈ dom ∘ Cmp.p₂
+    ∘-cod : cod ∘ -∘- ≈ cod ∘ Cmp.p₁
 
   open Equiv
   open HomReasoning
 
   -- λ f → (id , f)
   id×ₒ- : Mor ⇒ Mor×ₒMor
-  id×ₒ- = P₁.universal (cancelˡ id-dom ○ sym identityʳ)
+  id×ₒ- = Cmp.universal (cancelˡ id-dom ○ sym identityʳ)
 
   -- λ f → (f , id)
   -×ₒid : Mor ⇒ Mor×ₒMor
-  -×ₒid = P₁.universal (identityʳ ○ sym (cancelˡ id-cod))
+  -×ₒid = Cmp.universal (identityʳ ○ sym (cancelˡ id-cod))
 
   private
     drop₁ : [Mor×ₒMor]×ₒMor ⇒ Mor×ₒMor
-    drop₁ = P₁.universal (sym-assoc ○ P₂.commute)
+    drop₁ = Cmp.universal (sym-assoc ○ Assocˡ.commute)
 
   -- λ ((f , g) , h) → (f , (g , h))
   α : [Mor×ₒMor]×ₒMor ⇒ Mor×ₒ[Mor×ₒMor]
-  α = P₃.universal {h₂ = drop₁} (extendʳ P₁.commute ○ pushʳ (sym P₁.p₁∘universal≈h₁))
+  α = Assocʳ.universal {h₂ = drop₁} (extendʳ Cmp.commute ○ pushʳ (sym Cmp.p₁∘universal≈h₁))
 
   -- λ ((f , g) , h) → (f ∘ g , h)
   -∘-×ₒid : [Mor×ₒMor]×ₒMor ⇒ Mor×ₒMor
-  -∘-×ₒid = P₁.universal (pullˡ ∘-dom ○ P₂.commute)
+  -∘-×ₒid = Cmp.universal (pullˡ ∘-dom ○ Assocˡ.commute)
 
   -- λ (f , (g , h)) → (f , g ∘ h)
   id×ₒ-∘- : Mor×ₒ[Mor×ₒMor] ⇒ Mor×ₒMor
-  id×ₒ-∘- = P₁.universal (P₃.commute ○ (pushˡ (sym ∘-cod)))
+  id×ₒ-∘- = Cmp.universal (Assocʳ.commute ○ (pushˡ (sym ∘-cod)))
 
   -- Properties
   field
