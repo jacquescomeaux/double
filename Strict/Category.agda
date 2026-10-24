@@ -7,7 +7,9 @@ open import Level using (Level; suc; _⊔_)
 open import Relation.Binary using (Rel; IsEquivalence; Setoid)
 open import Relation.Binary.PropositionalEquality as ≡ using (_≡_)
 
--- Strict category
+-- In a strict category, objects form a "Set".
+-- This is witnessed by cast-unique which shows that the transport maps
+-- do not depend on which proofs of object equality are used
 record Category (o ≈o ℓ e : Level) : Set (suc (o ⊔ ≈o ⊔ ℓ ⊔ e)) where
 
   infix  4 _≈_ _⇒_
@@ -34,7 +36,7 @@ record Category (o ≈o ℓ e : Level) : Set (suc (o ⊔ ≈o ⊔ ℓ ⊔ e)) wh
     identity² : {A : Obj} → id {A} ∘ id ≈ id
     equiv : {A B : Obj} → IsEquivalence (_≈_ {A} {B})
     ∘-resp-≈ : {A B C : Obj} {f h : B ⇒ C} {g i : A ⇒ B} → f ≈ h → g ≈ i → f ∘ g ≈ h ∘ i
-    -- Transport maps
+    -- Transport maps between hom-sets
     cast : {A A′ B B′ : Obj} → A ≈ₒ A′ → B ≈ₒ B′ → A ⇒ B → A′ ⇒ B′
     cast-cong : {A A′ B B′ : Obj} (≈A : A ≈ₒ A′) (≈B : B ≈ₒ B′) (f g : A ⇒ B) → f ≈ g → cast ≈A ≈B f ≈ cast ≈A ≈B g
     -- Proof-irrelevance
