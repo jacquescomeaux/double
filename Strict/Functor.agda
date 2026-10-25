@@ -114,8 +114,6 @@ module _ {o o′ ≈o ≈o′ ℓ ℓ′ e e′ : Level} where
                     (D.cast-cong
                       (D.ObjEquiv.sym (eq₀ X))
                       (D.ObjEquiv.sym (eq₀ Y))
-                      (D.cast (eq₀ X) (eq₀ Y) (F.F₁ f))
-                      (G.F₁ f)
                       (eq₁ f))))
         }
       where
@@ -141,8 +139,6 @@ module _ {o o′ ≈o ≈o′ ℓ ℓ′ e e′ : Level} where
                   (D.cast-cong
                     (G≈H.eq₀ X)
                     (G≈H.eq₀ Y)
-                    (D.cast (F≈G.eq₀ X) (F≈G.eq₀ Y) (F.F₁ f))
-                    (G.F₁ f)
                     (F≈G.eq₁ f))
                   (G≈H.eq₁ f))
         }

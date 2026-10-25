@@ -21,9 +21,8 @@ record Category (o ≈o ℓ e : Level) : Set (suc (o ⊔ ≈o ⊔ ℓ ⊔ e)) wh
     -- A setoid of objects instead of just a type
     Objₛ : Setoid o ≈o
 
-  open Setoid Objₛ using () renaming (Carrier to Obj; _≈_ to _≈ₒ_) public
-  open Setoid Objₛ using (isEquivalence)
-  module ObjEquiv = IsEquivalence isEquivalence
+  open Setoid Objₛ using () renaming (Carrier to Obj; _≈_ to _≈ₒ_; isEquivalence to obj-equiv) public
+  module ObjEquiv = IsEquivalence obj-equiv
 
   field
     -- All the ordinary fields of a category
@@ -40,7 +39,7 @@ record Category (o ≈o ℓ e : Level) : Set (suc (o ⊔ ≈o ⊔ ℓ ⊔ e)) wh
     ∘-resp-≈ : {A B C : Obj} {f h : B ⇒ C} {g i : A ⇒ B} → f ≈ h → g ≈ i → f ∘ g ≈ h ∘ i
     -- Transport maps between hom-sets
     cast : {A A′ B B′ : Obj} → A ≈ₒ A′ → B ≈ₒ B′ → A ⇒ B → A′ ⇒ B′
-    cast-cong : {A A′ B B′ : Obj} (≈A : A ≈ₒ A′) (≈B : B ≈ₒ B′) (f g : A ⇒ B) → f ≈ g → cast ≈A ≈B f ≈ cast ≈A ≈B g
+    cast-cong : {A A′ B B′ : Obj} (≈A : A ≈ₒ A′) (≈B : B ≈ₒ B′) {f g : A ⇒ B} → f ≈ g → cast ≈A ≈B f ≈ cast ≈A ≈B g
     -- Proof-irrelevance
     cast-is-id : {A B : Obj} (≈A : A ≈ₒ A) (≈B : B ≈ₒ B) (f : A ⇒ B) → cast ≈A ≈B f ≈ f
     cast-cast

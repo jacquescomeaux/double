@@ -91,7 +91,7 @@ module _ {c ℓ : Level} (C : InternalCategory (Setoids (c ⊔ ℓ) ℓ) (pullba
           }
       ; ∘-resp-≈ = λ ≈f ≈g → cong -∘- (≈f , ≈g)
       ; cast = λ { ≈A ≈B (morphism f f-dom f-cod) → morphism f (Obj.trans f-dom ≈A) (Obj.trans f-cod ≈B) }
-      ; cast-cong = λ _ _ _ _ x → x
+      ; cast-cong = λ _ _ x → x
       ; cast-is-id = λ _ _ _ → Mor.refl
       ; cast-cast = λ _ _ _ _ _ _ _ → Mor.refl
       ; cast-id = cong id

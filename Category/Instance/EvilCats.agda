@@ -76,8 +76,6 @@ open Func
             (C.cast-cong
               (F≈H.eq₀ (I.F₀ ⟨$⟩ X))
               (F≈H.eq₀ (I.F₀ ⟨$⟩ Y))
-              (C.cast (cong F.F₀ (G≈I.eq₀ X)) (cong F.F₀ (G≈I.eq₀ Y)) (F.F₁ (H.F₁ f)))
-              (F.F₁ (I.F₁ f))
               (C.Equiv.trans
                 (C.Equiv.sym (F.F-cast (G≈I.eq₀ X) (G≈I.eq₀ Y) (H.F₁ f)))
                 (F.F-resp-≈ (G≈I.eq₁ f))))

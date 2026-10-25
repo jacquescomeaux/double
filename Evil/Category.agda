@@ -33,7 +33,7 @@ record Category (o oℓ ℓ e : Level) : Set (suc (o ⊔ oℓ ⊔ ℓ ⊔ e)) wh
     equiv : {A B : Obj} → IsEquivalence (_≈_ {A} {B})
     ∘-resp-≈ : {A B C : Obj} {f h : B ⇒ C} {g i : A ⇒ B} → f ≈ h → g ≈ i → f ∘ g ≈ h ∘ i
     cast : {A A′ B B′ : Obj} → A ≈ₒ A′ → B ≈ₒ B′ → A ⇒ B → A′ ⇒ B′
-    cast-cong : {A A′ B B′ : Obj} (≈A : A ≈ₒ A′) (≈B : B ≈ₒ B′) (f g : A ⇒ B) → f ≈ g → cast ≈A ≈B f ≈ cast ≈A ≈B g
+    cast-cong : {A A′ B B′ : Obj} (≈A : A ≈ₒ A′) (≈B : B ≈ₒ B′) {f g : A ⇒ B} → f ≈ g → cast ≈A ≈B f ≈ cast ≈A ≈B g
     cast-refl : {A B : Obj} (f : A ⇒ B) → cast refl refl f ≈ f
     cast-symˡ : {A A′ B B′ : Obj} (≈A : A ≈ₒ A′) (≈B : B ≈ₒ B′) (f : A ⇒ B) → cast (sym ≈A) (sym ≈B) (cast ≈A ≈B f) ≈ f
     cast-symʳ : {A A′ B B′ : Obj} (≈A : A ≈ₒ A′) (≈B : B ≈ₒ B′) (f : A′ ⇒ B′) → cast ≈A ≈B (cast (sym ≈A) (sym ≈B) f) ≈ f

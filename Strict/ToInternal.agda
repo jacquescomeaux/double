@@ -44,7 +44,7 @@ module _ {o ≈o ℓ e : Level} (C : Category (o ⊔ ≈o ⊔ ℓ ⊔ e) (o ⊔ 
         (sym ≈A)
         (sym ≈B)
         (Equiv.trans
-          (cast-cong _ _ _ _ (Equiv.sym f≈g))
+          (cast-cong _ _ (Equiv.sym f≈g))
           (Equiv.trans
             (cast-cast _ _ _ _ _ _ _)
             (cast-is-id refl refl _)))
@@ -57,7 +57,7 @@ module _ {o ≈o ℓ e : Level} (C : Category (o ⊔ ≈o ⊔ ℓ ⊔ e) (o ⊔ 
         (Equiv.trans
           (Equiv.sym (cast-cast ≈A₁ ≈A₂ (trans ≈A₁ ≈A₂) ≈B₁ ≈B₂ (trans ≈B₁ ≈B₂) f))
           (Equiv.trans
-            (cast-cong ≈A₂ ≈B₂ (cast ≈A₁ ≈B₁ f) g f≈g)
+            (cast-cong ≈A₂ ≈B₂ f≈g)
             g≈h))
 
   Mor : Setoid (o ⊔ ≈o ⊔ ℓ ⊔ e) (o ⊔ ≈o ⊔ ℓ ⊔ e)
@@ -111,7 +111,7 @@ module _ {o ≈o ℓ e : Level} (C : Category (o ⊔ ≈o ⊔ ℓ ⊔ e) (o ⊔ 
                       (cast-cast C≈B ≈B (trans ≈C C′≈B′) refl ≈D ≈D f)
                       (Equiv.trans
                         (Equiv.sym (cast-cast ≈C C′≈B′ (trans ≈C C′≈B′) ≈D refl ≈D f))
-                        (cast-cong C′≈B′ refl (cast ≈C ≈D f) f′ ≈f)))
+                        (cast-cong C′≈B′ refl ≈f)))
                     ≈g))
             }
       }

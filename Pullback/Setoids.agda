@@ -1,5 +1,5 @@
 {-# OPTIONS --without-K --safe #-}
-module Setoids.Pullback where
+module Pullback.Setoids where
 
 open import Categories.Category.Instance.Setoids using (Setoids)
 open import Categories.Diagram.Pullback using (Pullback)
