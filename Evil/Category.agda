@@ -1,22 +1,33 @@
 {-# OPTIONS --without-K --safe #-}
 module Evil.Category where
 
+open import Categories.Category.Groupoid using (Groupoid)
+open import Categories.Functor using (Functor)
+open import Categories.Functor.Instance.0-Truncation using (Trunc)
 open import Function using (flip)
 open import Level using (Level; suc; _⊔_)
 open import Relation.Binary using (Rel; IsEquivalence; Setoid)
+
+module Trunc {o ℓ e : Level} = Functor (Trunc {o} {ℓ} {e})
 
 -- Ordinarily, we'd like to do as much category theory as possible
 -- without ever referring to equality of objects.
 -- As such, this type of category is "evil" since it lets us do exactly that.
 -- However, objects don't necessarily form a "Set": for objects A B, different witnesses of A ≈ B
--- can induce meaningfully distinct tranports between hom-sets
-record Category (o oℓ ℓ e : Level) : Set (suc (o ⊔ oℓ ⊔ ℓ ⊔ e)) where
+-- can induce meaningfully distinct transports between hom-sets
+record Category (o oℓ oe ℓ e : Level) : Set (suc (o ⊔ oℓ ⊔ oe ⊔ ℓ ⊔ e)) where
   eta-equality
   infix  4 _≈_ _⇒_
   infixr 9 _∘_
 
   field
-    Objₛ : Setoid o oℓ
+    𝕆𝕓𝕛 : Groupoid o oℓ oe
+
+  module 𝕆𝕓𝕛 = Groupoid 𝕆𝕓𝕛
+  open 𝕆𝕓𝕛 using () renaming (_≈_ to _≈₂_) public
+
+  Objₛ : Setoid o oℓ
+  Objₛ = Trunc.₀ 𝕆𝕓𝕛
 
   open Setoid Objₛ using (refl; sym; trans) renaming (Carrier to Obj; _≈_ to _≈ₒ_) public
 
@@ -35,8 +46,14 @@ record Category (o oℓ ℓ e : Level) : Set (suc (o ⊔ oℓ ⊔ ℓ ⊔ e)) wh
     cast : {A A′ B B′ : Obj} → A ≈ₒ A′ → B ≈ₒ B′ → A ⇒ B → A′ ⇒ B′
     cast-cong : {A A′ B B′ : Obj} (≈A : A ≈ₒ A′) (≈B : B ≈ₒ B′) {f g : A ⇒ B} → f ≈ g → cast ≈A ≈B f ≈ cast ≈A ≈B g
     cast-refl : {A B : Obj} (f : A ⇒ B) → cast refl refl f ≈ f
-    cast-symˡ : {A A′ B B′ : Obj} (≈A : A ≈ₒ A′) (≈B : B ≈ₒ B′) (f : A ⇒ B) → cast (sym ≈A) (sym ≈B) (cast ≈A ≈B f) ≈ f
-    cast-symʳ : {A A′ B B′ : Obj} (≈A : A ≈ₒ A′) (≈B : B ≈ₒ B′) (f : A′ ⇒ B′) → cast ≈A ≈B (cast (sym ≈A) (sym ≈B) f) ≈ f
+    cast-cong₂
+        : {A A′ B B′ : Obj}
+          {≈A ≈A′ : A ≈ₒ A′}
+          {≈B ≈B′ : B ≈ₒ B′}
+          (≈₂A : ≈A ≈₂ ≈A′)
+          (≈₂B : ≈B ≈₂ ≈B′)
+          (f : A ⇒ B)
+        → cast ≈A ≈B f ≈ cast ≈A′ ≈B′ f
     cast-trans
         : {A A′ B B′ C C′ : Obj}
           (A≈B : A ≈ₒ B)
@@ -57,9 +74,25 @@ record Category (o oℓ ℓ e : Level) : Set (suc (o ⊔ oℓ ⊔ ℓ ⊔ e)) wh
 
   module Equiv {A B} = IsEquivalence (equiv {A} {B})
 
-  op : Category o oℓ ℓ e
+  cast-symˡ : {A A′ B B′ : Obj} (≈A : A ≈ₒ A′) (≈B : B ≈ₒ B′) (f : A ⇒ B) → cast (sym ≈A) (sym ≈B) (cast ≈A ≈B f) ≈ f
+  cast-symˡ ≈A ≈B f =
+      Equiv.trans
+        (Equiv.sym (cast-trans ≈A (sym ≈A) ≈B (sym ≈B) f))
+        (Equiv.trans
+          (cast-cong₂ 𝕆𝕓𝕛.iso.isoˡ 𝕆𝕓𝕛.iso.isoˡ f)
+          (cast-refl f))
+
+  cast-symʳ : {A A′ B B′ : Obj} (≈A : A ≈ₒ A′) (≈B : B ≈ₒ B′) (f : A′ ⇒ B′) → cast ≈A ≈B (cast (sym ≈A) (sym ≈B) f) ≈ f
+  cast-symʳ ≈A ≈B f =
+      Equiv.trans
+        (Equiv.sym (cast-trans (sym ≈A) ≈A (sym ≈B) ≈B f))
+        (Equiv.trans
+          (cast-cong₂ 𝕆𝕓𝕛.iso.isoʳ 𝕆𝕓𝕛.iso.isoʳ f)
+          (cast-refl f))
+
+  op : Category o oℓ oe ℓ e
   op = record
-      { Objₛ       = Objₛ
+      { 𝕆𝕓𝕛        = 𝕆𝕓𝕛
       ; _⇒_        = flip _⇒_
       ; _≈_        = λ {A B} → _≈_ {B} {A}
       ; _∘_        = flip _∘_
@@ -74,9 +107,8 @@ record Category (o oℓ ℓ e : Level) : Set (suc (o ⊔ oℓ ⊔ ℓ ⊔ e)) wh
       ; cast       = flip cast
       ; cast-cong  = flip cast-cong
       ; cast-refl  = cast-refl
-      ; cast-id    = cast-id
-      ; cast-symˡ  = flip cast-symˡ
-      ; cast-symʳ  = flip cast-symʳ
-      ; cast-∘     = λ ≈A ≈B ≈C f g → cast-∘ ≈C ≈B ≈A g f
       ; cast-trans = λ A≈B B≈C A′≈B′ B′≈C′ → cast-trans A′≈B′ B′≈C′ A≈B B≈C
+      ; cast-cong₂ = flip cast-cong₂
+      ; cast-id    = cast-id
+      ; cast-∘     = λ ≈A ≈B ≈C f g → cast-∘ ≈C ≈B ≈A g f
       }

@@ -4,8 +4,10 @@ module Strict.Category where
 
 import Evil.Category as Evil
 
+open import Categories.Category.Construction.SetoidDiscrete using (Discrete)
+open import Categories.Category.Discrete using (DiscreteCategory)
 open import Function using (flip)
-open import Level using (Level; suc; _⊔_)
+open import Level using (Level; suc; _⊔_; 0ℓ)
 open import Relation.Binary using (Rel; IsEquivalence; Setoid)
 open import Relation.Binary.PropositionalEquality as ≡ using (_≡_)
 
@@ -95,9 +97,9 @@ record Category (o ≈o ℓ e : Level) : Set (suc (o ⊔ ≈o ⊔ ℓ ⊔ e)) wh
 
   open ObjEquiv
 
-  evil : Evil.Category o ≈o ℓ e
+  evil : Evil.Category o ≈o 0ℓ ℓ e
   evil = record
-      { Objₛ       = Objₛ
+      { 𝕆𝕓𝕛        = record { DiscreteCategory (Discrete Objₛ) }
       ; _⇒_        = _⇒_
       ; _≈_        = _≈_
       ; _∘_        = _∘_
@@ -111,9 +113,8 @@ record Category (o ≈o ℓ e : Level) : Set (suc (o ⊔ ≈o ⊔ ℓ ⊔ e)) wh
       ; ∘-resp-≈   = ∘-resp-≈
       ; cast       = cast
       ; cast-cong  = cast-cong
+      ; cast-cong₂ = λ {≈A = ≈A} {≈A′ ≈B ≈B′} _ _ → cast-unique ≈A ≈A′ ≈B ≈B′
       ; cast-refl  = cast-is-id refl refl
-      ; cast-symˡ  = λ ≈A ≈B f → Equiv.trans (cast-cast ≈A (sym ≈A) refl ≈B (sym ≈B) refl f) (cast-is-id refl refl f)
-      ; cast-symʳ  = λ ≈A ≈B f → Equiv.trans (cast-cast (sym ≈A) ≈A refl (sym ≈B) ≈B refl f) (cast-is-id refl refl f)
       ; cast-trans = λ A≈B B≈C A′≈B′ B′≈C′ f → Equiv.sym (cast-cast A≈B B≈C (trans A≈B B≈C) A′≈B′ B′≈C′ (trans A′≈B′ B′≈C′) f)
       ; cast-id    = cast-id
       ; cast-∘     = cast-∘

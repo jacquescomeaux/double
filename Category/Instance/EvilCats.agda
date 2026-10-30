@@ -6,12 +6,11 @@ import Categories.Category as NonStrict
 
 open import Evil.Category using (Category)
 open import Evil.Functor using (Functor; idF; _∘F_; _≈F_; ≈F-sym; ≈F-isEquiv)
-open import Function using (Func; _⟨$⟩_)
 open import Level using (Level; suc; _⊔_)
 
 ∘F-assoc
-    : {o oℓ ℓ e : Level}
-      {A B C D : Category o oℓ ℓ e}
+    : {o oℓ oe ℓ e : Level}
+      {A B C D : Category o oℓ oe ℓ e}
       {f : Functor A B}
       {g : Functor B C}
       {h : Functor C D}
@@ -27,8 +26,8 @@ open import Level using (Level; suc; _⊔_)
     module H = Functor H
 
 ∘F-identityˡ
-    : {o oℓ ℓ e : Level}
-      {A B : Category o oℓ ℓ e}
+    : {o oℓ oe ℓ e : Level}
+      {A B : Category o oℓ oe ℓ e}
       {f : Functor A B}
     → idF ∘F f ≈F f
 ∘F-identityˡ {A = A} {B} {F} = record
@@ -40,8 +39,8 @@ open import Level using (Level; suc; _⊔_)
     module F = Functor F
 
 ∘F-identityʳ
-    : {o oℓ ℓ e : Level}
-      {A B : Category o oℓ ℓ e}
+    : {o oℓ oe ℓ e : Level}
+      {A B : Category o oℓ oe ℓ e}
       {f : Functor A B}
     → f ∘F idF ≈F f
 ∘F-identityʳ {A = A} {B} {F} = record
@@ -52,30 +51,28 @@ open import Level using (Level; suc; _⊔_)
     module B = Category B
     module F = Functor F
 
-open Func
-
 ∘F-resp-≈F
-    : {o oℓ ℓ e : Level}
-      {A B C : Category o oℓ ℓ e}
+    : {o oℓ oe ℓ e : Level}
+      {A B C : Category o oℓ oe ℓ e}
       {F H : Functor B C}
       {G I : Functor A B}
     → F ≈F H
     → G ≈F I
     → F ∘F G ≈F H ∘F I
 ∘F-resp-≈F {A = A} {B} {C} {F} {G} {H} {I} F≈H G≈I = record
-    { eq₀ = λ X → C.trans (cong F.F₀ (G≈I.eq₀ X)) (F≈H.eq₀ (I.F₀ ⟨$⟩ X))
+    { eq₀ = λ X → C.trans (F.cong (G≈I.eq₀ X)) (F≈H.eq₀ (I.F₀ X))
     ; eq₁ = λ {X Y} f →
         C.Equiv.trans
           (C.cast-trans
-            (cong F.F₀ (G≈I.eq₀ X))
-            (F≈H.eq₀ (I.F₀ ⟨$⟩ X))
-            (cong F.F₀ (G≈I.eq₀ Y))
-            (F≈H.eq₀ (I.F₀ ⟨$⟩ Y))
+            (F.cong (G≈I.eq₀ X))
+            (F≈H.eq₀ (I.F₀ X))
+            (F.cong (G≈I.eq₀ Y))
+            (F≈H.eq₀ (I.F₀ Y))
             (F.F₁ (H.F₁ f)))
           (C.Equiv.trans
             (C.cast-cong
-              (F≈H.eq₀ (I.F₀ ⟨$⟩ X))
-              (F≈H.eq₀ (I.F₀ ⟨$⟩ Y))
+              (F≈H.eq₀ (I.F₀ X))
+              (F≈H.eq₀ (I.F₀ Y))
               (C.Equiv.trans
                 (C.Equiv.sym (F.F-cast (G≈I.eq₀ X) (G≈I.eq₀ Y) (H.F₁ f)))
                 (F.F-resp-≈ (G≈I.eq₁ f))))
@@ -90,9 +87,9 @@ open Func
     module F≈H = _≈F_ F≈H
     module G≈I = _≈F_ G≈I
 
-EvilCats : (o oℓ ℓ e : Level) → NonStrict.Category (suc (o ⊔ oℓ ⊔ ℓ ⊔ e)) (o ⊔ oℓ ⊔ ℓ ⊔ e) (o ⊔ oℓ ⊔ ℓ ⊔ e)
-EvilCats o oℓ ℓ e = record
-    { Obj = Category o oℓ ℓ e
+EvilCats : (o oℓ oe ℓ e : Level) → NonStrict.Category (suc (o ⊔ oℓ ⊔ oe ⊔ ℓ ⊔ e)) (o ⊔ oℓ ⊔ oe ⊔ ℓ ⊔ e) (o ⊔ oℓ ⊔ oe ⊔ ℓ ⊔ e)
+EvilCats o oℓ oe ℓ e = record
+    { Obj = Category o oℓ oe ℓ e
     ; _⇒_ = Functor
     ; _≈_ = _≈F_
     ; id = idF
