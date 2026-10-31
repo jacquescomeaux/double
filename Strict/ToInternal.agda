@@ -9,8 +9,8 @@ open import Data.Product using (∃₂; _,_)
 open import Function using (_⟨$⟩_; Func; _⟶ₛ_)
 open import Internal.WithPullbacks using (InternalCategory)
 open import Level using (Level; _⊔_)
+open import Pullback.Setoids using (pullback)
 open import Relation.Binary using (Rel; Setoid)
-open import Setoids.Pullback using (pullback)
 open import Strict.Category using (Category)
 
 open Func
