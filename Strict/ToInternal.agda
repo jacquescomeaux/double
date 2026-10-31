@@ -1,5 +1,8 @@
 {-# OPTIONS --without-K --safe #-}
-module Strict.ToInternal where
+
+open import Level using (Level; _⊔_)
+
+module Strict.ToInternal {o ℓ e : Level} where
 
 import Relation.Binary.Reasoning.Setoid as ≈-Reasoning
 
@@ -8,22 +11,21 @@ open import Categories.Diagram.Pullback using (Pullback)
 open import Data.Product using (∃₂; _,_)
 open import Function using (_⟨$⟩_; Func; _⟶ₛ_)
 open import Internal.WithPullbacks using (InternalCategory)
-open import Level using (Level; _⊔_)
 open import Pullback.Setoids using (pullback)
 open import Relation.Binary using (Rel; Setoid)
 open import Strict.Category using (Category)
 
 open Func
 
-module _ {o ≈o ℓ e : Level} (C : Category (o ⊔ ≈o ⊔ ℓ ⊔ e) (o ⊔ ≈o ⊔ ℓ ⊔ e) ℓ e) where
+module _ (C : Category (o ⊔ ℓ ⊔ e) (o ⊔ ℓ ⊔ e) ℓ e) where
 
   open Category C
   module Obj = Setoid Objₛ
 
-  ∣Mor∣ : Set (o ⊔ ≈o ⊔ ℓ ⊔ e)
+  ∣Mor∣ : Set (o ⊔ ℓ ⊔ e)
   ∣Mor∣ = ∃₂ _⇒_
 
-  data _≈′_ : Rel ∣Mor∣ (o ⊔ ≈o ⊔ ℓ ⊔ e) where
+  data _≈′_ : Rel ∣Mor∣ (o ⊔ ℓ ⊔ e) where
     mk-≈
         : {A A′ B B′ : Obj}
           {f : A ⇒ B}
@@ -60,7 +62,7 @@ module _ {o ≈o ℓ e : Level} (C : Category (o ⊔ ≈o ⊔ ℓ ⊔ e) (o ⊔ 
             (cast-cong ≈A₂ ≈B₂ f≈g)
             g≈h))
 
-  Mor : Setoid (o ⊔ ≈o ⊔ ℓ ⊔ e) (o ⊔ ≈o ⊔ ℓ ⊔ e)
+  Mor : Setoid (o ⊔ ℓ ⊔ e) (o ⊔ ℓ ⊔ e)
   Mor = record
       { Carrier = ∣Mor∣
       ; _≈_ = _≈′_
@@ -89,8 +91,8 @@ module _ {o ≈o ℓ e : Level} (C : Category (o ⊔ ≈o ⊔ ℓ ⊔ e) (o ⊔ 
     ; cong = λ ≈A → mk-≈ ≈A ≈A (cast-id ≈A)
     }
 
-  Cmp : Pullback (Setoids (o ⊔ ≈o ⊔ ℓ ⊔ e) (o ⊔ ≈o ⊔ ℓ ⊔ e)) dom cod
-  Cmp = pullback {o ⊔ ≈o ⊔ ℓ ⊔ e} dom cod
+  Cmp : Pullback (Setoids (o ⊔ ℓ ⊔ e) (o ⊔ ℓ ⊔ e)) dom cod
+  Cmp = pullback {o ⊔ ℓ ⊔ e} dom cod
 
   module Cmp = Pullback Cmp
 
@@ -116,7 +118,7 @@ module _ {o ≈o ℓ e : Level} (C : Category (o ⊔ ≈o ⊔ ℓ ⊔ e) (o ⊔ 
             }
       }
 
-  internalCategory : InternalCategory (Setoids (o ⊔ ≈o ⊔ ℓ ⊔ e) (o ⊔ ≈o ⊔ ℓ ⊔ e)) (pullback {o})
+  internalCategory : InternalCategory (Setoids (o ⊔ ℓ ⊔ e) (o ⊔ ℓ ⊔ e)) (pullback {o})
   internalCategory = record
       { Obj = Objₛ
       ; Mor = Mor
@@ -154,4 +156,61 @@ module _ {o ≈o ℓ e : Level} (C : Category (o ⊔ ≈o ⊔ ℓ ⊔ e) (o ⊔ 
                       (cast-unique (trans (trans refl (trans (trans refl refl) refl)) ≈B) (trans refl ≈B) refl refl g)))
                   Equiv.refl)
                 assoc)) }
+      }
+
+open import Strict.Functor using (Functor)
+open import Internal.Functor using (InternalFunctor)
+
+module _
+    {C D : Category (o ⊔ ℓ ⊔ e) (o ⊔ ℓ ⊔ e) ℓ e}
+    (F : Functor C D)
+  where
+
+  private
+    module C = Category C
+    module D = Category D
+
+  open Functor F
+
+  F₁′ : Mor C ⟶ₛ Mor D
+  F₁′ = record
+      { to = λ (A , B , f) → F₀ ⟨$⟩ A , F₀ ⟨$⟩ B , F₁ f
+      ; cong = λ { (mk-≈ {f = f} ≈A ≈B ≈f) → mk-≈ (cong F₀ ≈A) (cong F₀ ≈B) (D.Equiv.trans (D.Equiv.sym (F-cast ≈A ≈B f)) (F-resp-≈ ≈f)) }
+      }
+
+  internalFunctor
+      : InternalFunctor
+          (Setoids (o ⊔ ℓ ⊔ e) (o ⊔ ℓ ⊔ e))
+          (pullback {o})
+          (internalCategory C)
+          (internalCategory D)
+  internalFunctor = record
+      { F₀ = F₀
+      ; F₁ = F₁′
+      ; F-dom = D.ObjEquiv.refl
+      ; F-cod = D.ObjEquiv.refl
+      ; identity =
+          mk-≈
+            D.ObjEquiv.refl
+            D.ObjEquiv.refl
+            (D.Equiv.trans
+              (D.cast-is-id D.ObjEquiv.refl D.ObjEquiv.refl (F₁ C.id))
+              identity)
+      ; homomorphism = λ { { (B , C , g) , (A , B′ , f ) , ≈B }
+          → mk-≈
+              D.ObjEquiv.refl
+              D.ObjEquiv.refl
+              (D.Equiv.trans
+                (D.cast-is-id
+                  D.ObjEquiv.refl
+                  D.ObjEquiv.refl
+                  (F₁ (C.cast ≈B C.ObjEquiv.refl g C.∘ f)))
+                (D.Equiv.trans
+                  homomorphism
+                  (D.∘-resp-≈
+                    (D.Equiv.trans
+                      (F-cast ≈B C.ObjEquiv.refl g)
+                      (D.cast-unique (cong F₀ ≈B) _ (cong F₀ C.ObjEquiv.refl) D.ObjEquiv.refl (F₁ g)))
+                    D.Equiv.refl)))
+          }
       }

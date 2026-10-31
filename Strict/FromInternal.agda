@@ -1,5 +1,8 @@
 {-# OPTIONS --without-K --safe #-}
-module Strict.FromInternal where
+
+open import Level using (Level; _⊔_)
+
+module Strict.FromInternal {c ℓ : Level} where
 
 import Relation.Binary.Reasoning.Setoid as ≈-Reasoning
 
@@ -7,14 +10,13 @@ open import Categories.Category.Instance.Setoids using (Setoids)
 open import Data.Product using (_,_)
 open import Function using (_⟨$⟩_; Func)
 open import Internal.WithPullbacks using (InternalCategory)
-open import Level using (Level; _⊔_)
 open import Relation.Binary using (Rel; Setoid)
 open import Pullback.Setoids using (pullback)
 open import Strict.Category using (Category)
 
 open Func
 
-module _ {c ℓ : Level} (C : InternalCategory (Setoids (c ⊔ ℓ) ℓ) (pullback {c ⊔ ℓ})) where
+module _ (C : InternalCategory (Setoids (c ⊔ ℓ) ℓ) (pullback {c ⊔ ℓ})) where
 
   open InternalCategory C
 
@@ -96,4 +98,35 @@ module _ {c ℓ : Level} (C : InternalCategory (Setoids (c ⊔ ℓ) ℓ) (pullba
       ; cast-cast = λ _ _ _ _ _ _ _ → Mor.refl
       ; cast-id = cong id
       ; cast-∘ = λ ≈A ≈B ≈C ≈D g → cong -∘- (Mor.refl , Mor.refl)
+      }
+
+open import Internal.Functor using (InternalFunctor)
+open import Strict.Functor using (Functor)
+
+module _
+    {C D : InternalCategory (Setoids (c ⊔ ℓ) ℓ) (pullback {c ⊔ ℓ})}
+    (F : InternalFunctor (Setoids (c ⊔ ℓ) ℓ) (pullback {c ⊔ ℓ}) C D)
+    where
+
+  private
+    module C = InternalCategory C
+    module D = InternalCategory D
+
+  module DObj = Setoid D.Obj
+  module DMor = Setoid D.Mor
+
+  open InternalFunctor F
+
+  functor : Functor (category C) (category D)
+  functor = record
+      { F₀ = F₀
+      ; F₁ = λ (morphism f f-dom f-cod) →
+          morphism
+            (F₁ ⟨$⟩ f)
+            (DObj.trans F-dom (cong F₀ f-dom))
+            (DObj.trans F-cod (cong F₀ f-cod))
+      ; identity = identity
+      ; homomorphism = DMor.trans homomorphism (cong D.-∘- (DMor.refl , DMor.refl))
+      ; F-resp-≈ = cong F₁
+      ; F-cast = λ _ _ _ → DMor.refl
       }
